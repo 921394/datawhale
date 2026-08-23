@@ -8,8 +8,9 @@
 2. [A 股量化完整工作流](docs/a-share-workflow.md)：现成策略、框架选择和进阶自研路径。
 3. [从文档到可运行项目](docs/next-stage-plan.md)：当前缺口、最小项目和入门到进阶路线。
 4. [开源代码与免费资源](docs/open-source-and-free-resources.md)：数据源、框架、现成策略和社区成品。
-5. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
-6. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
+5. [量化赚钱的方式](docs/quant-profit-models.md)：Beta、因子、套利、执行和非交易收入。
+6. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
+7. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
 
 ## 当前技术路线
 
