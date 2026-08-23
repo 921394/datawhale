@@ -10,8 +10,9 @@
 4. [开源代码与免费资源](docs/open-source-and-free-resources.md)：数据源、框架、现成策略和社区成品。
 5. [量化赚钱的方式](docs/quant-profit-models.md)：Beta、因子、套利、执行和非交易收入。
 6. [策略设计思想与收益来源](docs/strategy-design-and-counterparties.md)：按市场假设、收益来源和交易对手分析策略。
-7. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
-8. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
+7. [网站与源码中的现成策略](docs/strategy-examples-by-source.md)：按类别记录公开网站和开源仓库中的策略示例。
+8. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
+9. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
 
 ## 当前技术路线
 
