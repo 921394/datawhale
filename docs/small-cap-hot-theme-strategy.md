@@ -35,6 +35,44 @@
 
 它适合提炼“板块先动、个股滞涨、新闻催化”的选股逻辑，但仓库内仍有硬编码示例数据，`feedback.jsonl` 只是简单的次日反馈记录，不等于无未来数据泄漏的样本外回测。小市值缺失时用“股价低于 20 元”做代理也不严谨，不能直接当作市值筛选。运行还依赖通达信和 Tushare 等本地数据配置。
 
+## 可直接运行的相近项目
+
+### 3. gupiao：全市场短线扫描
+
+[gupiao](https://github.com/WCSY-YG/gupiao) 与当前目标最接近。它提供 `short_term` 1～3 个交易日模式、竞价开盘突破、温和缺口修复、放量突破和低波动突破等策略，并支持全市场扫描、买卖计划和回测。早盘模式只使用前一交易日及以前的日 K，加上当天 09:25 前的竞价数据；回测包含 T+1、涨停不可买、跌停不可卖和停牌不可成交等约束。
+
+典型入口：
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen list
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen morning --db data/cache/market_scan.sqlite --trade-date 2026-05-29 --horizon short_term --top 20 --limit 500 --auction-provider local_jingjia
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli backtest morning --db data/cache/market_scan.sqlite --start 2026-01-01 --end 2026-05-29 --horizon short_term --auction-provider local_jingjia
+```
+
+它适合直接改造成“当前全市场候选扫描器”，但项目本身没有证明这些策略在未来仍能稳定盈利；竞价增强也应先与纯 K 线基线做对照。
+
+### 4. a-share-quant-sim：小市值、动量和短持有期
+
+[a-share-quant-sim](https://github.com/fkchaos/a-share-quant-sim) 是更适合研究参数的框架，包含动量、市值、流动性、换手率和情绪因子，支持横截面打分、回测、滚动 walk-forward 和模拟交易。项目提供无 API 密钥的快速运行路径：
+
+```bash
+git clone https://github.com/fkchaos/a-share-quant-sim.git
+cd a-share-quant-sim
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+python3 scripts/tools/init_project.py
+python3 scripts/backtest/wf_runner.py --strategy v68
+```
+
+它的实验记录提到，部分有效版本与“硬动量过滤 + 小市值暴露 + 短持有期”有关，和本调查目标相近。不过仓库也明确提示成本模型、生存者偏差、容量和涨跌停成交仍有局限，应先做纸面交易。
+
+### 5. limit-up-sniper：首板题材短线
+
+[limit-up-sniper](https://github.com/guoyaohua/limit-up-sniper) 主要研究首板涨停、低流通市值、题材延续和 Tick 行情，提供离线回归测试、Tick 回测和模拟交易。它比“启动 3～5 天后持有 1～3 天”更激进，适合作为题材短线的对照策略，不适合直接当作本项目默认策略；QMT/XTQuant 实盘接口也应保持关闭。
+
+综合适配度排序：`gupiao` 适合先做全市场短线扫描，`a-share-quant-sim` 适合研究小市值和动量参数，`CTBZStock` 适合参考完整的小市值回测/模拟交易链路，`news-stock-selector` 适合提取热点补涨规则，`limit-up-sniper` 适合作为高风险题材策略对照。
+
 ## 建议的验证实验
 
 不要直接把热点规则接到实盘，先做同一数据集上的三组对照：
@@ -51,4 +89,4 @@
 
 ## 当前使用边界
 
-这两个仓库可以作为学习素材和候选生成器，但都不能证明“根据热点提前买入就能稳定盈利”。本项目下一步应先复现 A 组，再逐项加入 B、C 的特征，并保留可解释的交易日志；在没有样本外、成本后结果前，不做自动下单。
+这些仓库可以作为学习素材、回测基线和候选生成器，但都不能证明“根据热点提前买入就能稳定盈利”。本项目下一步应先复现 A 组，再逐项加入 B、C 的特征，并保留可解释的交易日志；在没有样本外、成本后结果前，不做自动下单。
