@@ -2,6 +2,30 @@
 
 AI 适合做解释、样例、重复代码、报错分析和代码审查。它不应该替你决定数据是否可信、回测假设是否合理，或是否可以把程序连接到真实账户。
 
+## 推荐角色与调用顺序
+
+本项目目前只有学习文档和回测规划，先使用少量针对性角色。角色名称取决于安装位置：英文角色在全局 `~/.codex/agents/`，中文角色在项目级 `.codex/agents/`。
+
+| 阶段 | 推荐角色 | 主要产出 |
+| --- | --- | --- |
+| 策略研究 | `Investment Researcher` 或 `finance-investment-researcher` | 市场假设、收益来源、资料和风险清单 |
+| 数据准备 | `Data Engineer` 或 `engineering-data-engineer` | CSV 字段约定、清洗规则、数据质量报告 |
+| 回测验证 | `Statistician` | 时间切分、未来数据泄漏检查、样本外和敏感性分析 |
+| 成本建模 | `Financial Analyst` 或 `finance-financial-analyst` | 手续费、滑点、换手率和收益拆解 |
+| 代码完成后 | `Code Reviewer` 或 `engineering-code-reviewer` | 交易逻辑、边界条件和安全问题审查 |
+| 文档维护 | `Technical Writer` 或 `engineering-technical-writer` | README 与 `docs/` 的结构、术语和示例维护 |
+
+最小协作链路是：
+
+```text
+Investment Researcher
+    -> Data Engineer
+    -> Statistician
+    -> Code Reviewer
+```
+
+不要让角色一次生成完整交易平台；每次只完成一个可运行、可验证的小任务。当前阶段坚持本地回测，不连接真实账户。
+
 ## 通用提问模板
 
 每次提问尽量提供：

@@ -13,6 +13,22 @@
 7. [网站与源码中的现成策略](docs/strategy-examples-by-source.md)：按类别记录公开网站和开源仓库中的策略示例，并标注收录状态。
 8. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
 9. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
+10. [小盘股热点与补涨策略调查](docs/small-cap-hot-theme-strategy.md)：分析小市值基线、新闻热点补涨逻辑和可验证路径。
+
+## 推荐的 AI 协作角色
+
+当前项目还处于文档和最小回测准备阶段，不需要启用全部角色。按任务选择下面的角色即可：
+
+| 角色 | Agent 名称 | 适用任务 |
+| --- | --- | --- |
+| 投资研究员 | `Investment Researcher` / `finance-investment-researcher` | 分析 A 股策略假设、收益来源、交易对手和资料 |
+| 数据工程师 | `Data Engineer` / `engineering-data-engineer` | 设计行情 CSV 清洗、字段统一、复权和数据质量检查 |
+| 统计学家 | `Statistician` | 检查未来数据泄漏、样本外验证和统计结论 |
+| 财务分析师 | `Financial Analyst` / `finance-financial-analyst` | 估算手续费、滑点、换手率和收益结构 |
+| 代码审查员 | `Code Reviewer` / `engineering-code-reviewer` | 回测代码完成后检查交易逻辑、边界条件和安全风险 |
+| 技术写作者 | `Technical Writer` / `engineering-technical-writer` | 维护本 README 和 `docs/` 文档，保持结构、术语和示例一致 |
+
+推荐顺序：投资研究员 -> 数据工程师 -> 统计学家 -> 代码审查员。技术写作者贯穿文档维护，不参与交易决策。
 
 ## 当前技术路线
 
