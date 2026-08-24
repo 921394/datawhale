@@ -160,3 +160,90 @@ conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen candidates \
 ```
 
 `balanced`、`win_rate` 和 `return` 是候选排序目标，不等于校准过的上涨概率。尤其 `win_rate` 组不能解释为“每只股票有对应百分比的上涨概率”，仍必须回到逐笔交易和样本外结果验证。
+
+## gupiao 快速运行指南
+
+以下流程适合第一次运行：先测试一只股票和一个不依赖竞价缓存的策略，再启动可视化，最后才扩展到短线竞价和全市场扫描。
+
+### 1. 安装
+
+```bash
+cd /home/opc/trader
+git clone https://github.com/WCSY-YG/gupiao.git
+cd gupiao
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+mkdir -p data reports/generated
+```
+
+如果已经有 Conda 环境，可把下面命令中的 `python` 换成 `conda run -n agent env PYTHONPATH=src python`。
+
+### 2. 下载单只股票日线
+
+```bash
+python -m gupiao.cli data daily \
+  000001 \
+  --start 2025-01-01 \
+  --end 2026-06-10 \
+  --adjust hfq \
+  > data/000001_daily.jsonl
+```
+
+检查文件是否有数据：
+
+```bash
+wc -l data/000001_daily.jsonl
+head -2 data/000001_daily.jsonl
+```
+
+### 3. 查看策略并运行单股信号
+
+```bash
+python -m gupiao.cli screen list
+
+python -m gupiao.cli screen run \
+  --strategy low_volatility_breakout \
+  --bars data/000001_daily.jsonl \
+  --symbol 000001 \
+  --as-of 2026-06-10
+```
+
+`--as-of` 限制策略只能使用该日期及以前的数据，用于检查未来数据泄漏。
+
+### 4. 生成可视化
+
+生成单股静态 Dashboard：
+
+```bash
+python -m gupiao.cli web dashboard \
+  --bars data/000001_daily.jsonl \
+  --symbol 000001 \
+  --output reports/generated/000001_dashboard.html
+```
+
+用浏览器打开 `reports/generated/000001_dashboard.html`，可以查看行情、信号、买卖点、收益曲线、回撤和交易明细。
+
+启动交互式 Web 工作台：
+
+```bash
+python -m gupiao.cli web serve --host 127.0.0.1 --port 8765
+```
+
+浏览器访问 `http://127.0.0.1:8765/`。
+
+### 5. 再运行短线竞价和全市场扫描
+
+`short_term` 早盘模式需要 SQLite 行情缓存和集合竞价数据，不能把单股日线测试命令直接替代它。确认单股流程后，再运行：
+
+```bash
+python -m gupiao.cli screen morning \
+  --db data/cache/market_scan.sqlite \
+  --trade-date 2026-06-10 \
+  --horizon short_term \
+  --top 20 \
+  --limit 500 \
+  --auction-provider local_jingjia
+```
+
+全流程只用于研究和模拟，不会自动下单。首次运行应先看单股 Dashboard、交易明细和回测假设，再扩大到全市场。
