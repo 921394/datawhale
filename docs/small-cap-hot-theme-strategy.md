@@ -90,3 +90,73 @@ python3 scripts/backtest/wf_runner.py --strategy v68
 ## 当前使用边界
 
 这些仓库可以作为学习素材、回测基线和候选生成器，但都不能证明“根据热点提前买入就能稳定盈利”。本项目下一步应先复现 A 组，再逐项加入 B、C 的特征，并保留可解释的交易日志；在没有样本外、成本后结果前，不做自动下单。
+
+## 如何拆解 gupiao，避免把它当黑盒
+
+不要只看 Web 页面里的股票名单。应同时检查源码、单次输出、历史回测和输入数据。
+
+### 1. 先看策略注册表
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen list
+```
+
+先记录每个策略的 ID、适用周期、决策时点、入场时点，以及是否依赖集合竞价。源码可以从 [`src/gupiao/strategies`](https://github.com/WCSY-YG/gupiao/tree/main/src/gupiao/strategies) 和 [`screening.py`](https://github.com/WCSY-YG/gupiao/blob/main/src/gupiao/strategies/screening.py) 开始阅读，再沿着 `factors`、`auction`、`backtest`、`signals` 和 `trade_plan.py` 追踪数据流。
+
+### 2. 只复现一只股票和一个历史日期
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen run \
+  --strategy momentum_pullback \
+  --bars data/000001_daily.jsonl \
+  --symbol 000001 \
+  --as-of 2026-05-29
+```
+
+`--as-of` 表示只使用该日期及以前的数据，是检查未来数据泄漏的关键。先确认输入数据、信号日期和输出字段，再扩展到全市场。
+
+### 3. 查看买卖计划，而不是只看“入选”
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli plan trade \
+  --db data/cache/market_scan.sqlite \
+  --symbol 000001 \
+  --trade-date 2026-05-29 \
+  --horizon short_term \
+  --auction-provider local_jingjia
+```
+
+重点核对：入选原因、参考买入价、买入时点、止损、止盈、最长持有期、信号失效条件和不买条件。
+
+### 4. 用回测报告验证交易假设
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli backtest morning \
+  --db data/cache/market_scan.sqlite \
+  --symbol 000001 \
+  --start 2026-01-01 \
+  --end 2026-05-29 \
+  --horizon short_term \
+  --auction-provider local_jingjia
+
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli report breakout \
+  --bars data/000001_daily.jsonl \
+  --symbol 000001 \
+  --output reports/generated/000001_breakout.md
+```
+
+报告中应检查交易明细、成交价、手续费、滑点、最大回撤、持有期和无法成交的情况。网页 Dashboard 适合浏览，Markdown/JSON 产物更适合审计。
+
+### 5. 最后才做批量扫描
+
+```bash
+conda run -n agent env PYTHONPATH=src python -m gupiao.cli screen candidates \
+  --strategy low_volatility_breakout \
+  --db data/cache/market_scan.sqlite \
+  --as-of 2026-05-29 \
+  --lookback 180 \
+  --top 30 \
+  --limit 500
+```
+
+`balanced`、`win_rate` 和 `return` 是候选排序目标，不等于校准过的上涨概率。尤其 `win_rate` 组不能解释为“每只股票有对应百分比的上涨概率”，仍必须回到逐笔交易和样本外结果验证。
