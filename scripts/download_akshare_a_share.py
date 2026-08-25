@@ -11,6 +11,19 @@ from datetime import date
 from pathlib import Path
 
 import akshare as ak
+import requests
+
+
+_REQUEST = requests.sessions.Session.request
+
+
+def _request_with_timeout(self, method, url, **kwargs):
+    kwargs.setdefault("timeout", 20)
+    return _REQUEST(self, method, url, **kwargs)
+
+
+# AKShare's Sina adapter does not set a timeout for every request.
+requests.sessions.Session.request = _request_with_timeout
 
 
 COLUMN_MAP = {
