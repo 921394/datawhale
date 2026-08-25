@@ -58,7 +58,7 @@ def load_symbols(retries: int) -> list[str]:
                 column for column in ("code", "证券代码", "A股代码") if column in frame.columns
             )
             codes = frame[code_column].astype(str).str.extract(r"(\d{6})")[0].dropna().unique().tolist()
-            return sorted(code for code in codes if code.startswith(("0", "3", "6", "8", "4")))
+            return sorted(code for code in codes if code.startswith(("0", "3", "4", "6", "8", "9")))
         except Exception as error:  # network providers can fail transiently
             last_error = error
             if attempt < retries:
@@ -127,7 +127,12 @@ def download_symbol(code: str, args: argparse.Namespace) -> tuple[int, str]:
 def main() -> int:
     args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    symbols = load_symbols(args.retries)
+    symbols_path = args.output_dir / "symbols.json"
+    if symbols_path.exists():
+        symbols = json.loads(symbols_path.read_text(encoding="utf-8"))
+    else:
+        symbols = load_symbols(args.retries)
+        symbols_path.write_text(json.dumps(symbols, ensure_ascii=False, indent=2), encoding="utf-8")
     if args.limit > 0:
         symbols = symbols[: args.limit]
 
