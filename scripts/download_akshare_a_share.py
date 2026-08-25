@@ -164,6 +164,9 @@ def main() -> int:
 
     def record(index: int, code: str, result: tuple[int, str]) -> None:
         rows, status = result
+        previous = manifest["completed"].get(code, {})
+        if status == "skipped" and previous.get("rows", 0) > 0:
+            rows = previous["rows"]
         manifest["completed"][code] = {"rows": rows, "status": status}
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"[{index}/{len(symbols)}] {code}: {status} ({rows})", flush=True)
