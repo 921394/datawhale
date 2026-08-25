@@ -14,6 +14,7 @@
 8. [AI 辅助学习与开发](docs/ai-assisted-learning.md)：可直接复制给 AI 的提示词和检查清单。
 9. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
 10. [小盘股热点与补涨策略调查](docs/small-cap-hot-theme-strategy.md)：分析小市值基线、新闻热点补涨逻辑和可验证路径。
+11. [多工具短线策略流水线](docs/multi-tool-short-term-pipeline.md)：规划 AKShare、Qlib、vn.py 和 gupiao 的分工，并记录全市场数据下载约束。
 
 ## 推荐的 AI 协作角色
 
