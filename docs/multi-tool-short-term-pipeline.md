@@ -55,10 +55,10 @@ python scripts/download_akshare_a_share.py \
 原始下载文件使用统一字段：
 
 ```text
-code,date,open,high,low,close,volume,amount,amplitude,change_pct,change,turnover_pct
+code,provider,date,open,high,low,close,volume,amount,float_shares,turnover_pct
 ```
 
-`qfq` 适合连续收益和技术指标研究；如需检查除权除息影响，应另外保存 `raw` 或 `hfq` 数据，不能在同一回测中混用。脚本默认优先使用 AKShare 的新浪日线接口，并在失败时尝试东方财富接口。
+`qfq` 适合连续收益和技术指标研究；如需检查除权除息影响，应另外保存 `raw` 或 `hfq` 数据，不能在同一回测中混用。脚本默认优先使用 AKShare 的新浪日线接口，并在失败时尝试东方财富接口。实际运行过程见[流水线运行记录](pipeline-run-log.md)。
 
 ## 4. 历史参数研究
 

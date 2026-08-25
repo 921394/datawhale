@@ -15,6 +15,7 @@
 9. [开源量化框架调查](docs/framework-survey.md)：了解不同框架的边界，再决定是否使用。
 10. [小盘股热点与补涨策略调查](docs/small-cap-hot-theme-strategy.md)：分析小市值基线、新闻热点补涨逻辑和可验证路径。
 11. [多工具短线策略流水线](docs/multi-tool-short-term-pipeline.md)：规划 AKShare、Qlib、vn.py 和 gupiao 的分工，并记录全市场数据下载约束。
+12. [本次流水线运行记录](docs/pipeline-run-log.md)：记录环境、命令、下载进度、校验结果和可恢复操作。
 
 ## 推荐的 AI 协作角色
 
